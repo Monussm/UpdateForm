@@ -43,16 +43,65 @@ app.get("/",(req,res)=>{
 const params={}
 res.render('index')
 })
+app.get("/log",(req,res)=>{
+const params={}
+res.render('log')
+})
+app.get("/update",(req,res)=>{
+const params={}
+res.render('update')
+})
+
+
+app.post("/update",async(req,res)=>{
+const emailid=req.body.emailid
+const password=req.body.password
+const check=await signup.findOne({emailid})
+console.log(check)
+if(check.emailid===emailid){
+if(check.password==password){
+  const emailid=req.body.emailid
+  const newpassword=req.body.newpassword
+  const update=await signup.findOneAndUpdate({emailid},{$set:{newpassword}})
+  console.log(update)
+  }
+  else{
+  res.send("password not match")
+
+  }
+
+}
+else{
+
+
+res.send("Update")
+
+}
+
+
+
+})
+
 app.post("/log",async(req,res)=>{
 const emailid=req.body.emailid
 const password=req.body.password
-if(check.emailid===password){
-if(check.password==emailid){
-res.send("match")
+const check=await signup.findOne({emailid})
+console.log(check)
+if(check.emailid===emailid){
+if(check.password==password){
+res.send('login')
 }
 else{
-  res.send("not match")
+
+res.send('password not match')
+
+
 }
+}
+else{
+
+res.send('id not matched')
+
 }
 })
 
@@ -60,7 +109,7 @@ else{
 
 app.post("/",async(req,res)=>{
 const password=req.body.password
-const confirmpassword=req.body.password
+const confirmpassword=req.body.confirmpassword
 if(password===confirmpassword){
   const silence = new signup({
     firstname:req.body.firstname,
@@ -69,16 +118,13 @@ if(password===confirmpassword){
     phoneno:req.body.phoneno,
     password:req.body.password,
     confirmpassword:req.body.confirmpassword,
-    message:req.body.message
+    message:req.body.message,
     });
     await silence.save()
     res.render('log')
 }
 else{
-alert("hello world")
+res.render("not match")
 }
 })
 app.listen(port);
-
-const dele=signup.find()
-console.log(dele)
